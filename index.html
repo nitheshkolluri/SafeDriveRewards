@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>SafeDrive</title>
@@ -10,17 +10,19 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-extra-markers/1.2.1/css/leaflet.extra-markers.min.css">
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-extra-markers/1.2.1/js/leaflet.extra-markers.min.js"></script>
+    
+    <!-- Google Maps API - Removed 'places' library to fix LegacyApiNotActivatedMapError -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAlnfm3m-8Gmrww0VmueTg5ff28t0Wm_8k&libraries=geometry"></script>
+
     <style>
-        html, body, #root {
+        html, body {
             height: 100%;
+            height: 100dvh; /* Modern mobile browser support */
             overflow: hidden;
+            padding: 0;
+            margin: 0;
+            overscroll-behavior: none; /* Prevent pull-to-refresh on mobile */
         }
         body { font-family: 'Inter', sans-serif; }
         .font-poppins { font-family: 'Poppins', sans-serif; }
@@ -29,6 +31,7 @@
         * {
             scrollbar-width: none !important; /* Firefox */
             -ms-overflow-style: none !important; /* IE and Edge */
+            -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
         }
         
         *::-webkit-scrollbar {
@@ -37,28 +40,9 @@
             height: 0 !important;
         }
 
-        /* Custom Map Popup Styling - Dynamic Theme handled in Component but defaults here */
-        .custom-popup .leaflet-popup-content-wrapper {
-            background: rgba(15, 23, 42, 0.9); /* Default dark fallback */
-            color: #F1F5F9;
-            border-radius: 12px;
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
-        }
-        .custom-popup .leaflet-popup-tip {
-            background: rgba(15, 23, 42, 0.9);
-        }
-        
-        /* Light Mode Popup Overrides (applied via JS if needed, or global class) */
-        html:not(.dark) .custom-popup .leaflet-popup-content-wrapper {
-            background: rgba(255, 255, 255, 0.95);
-            color: #0F172A;
-            border: 1px solid #E2E8F0;
-            box-shadow: 0 10px 25px -5px rgba(148, 163, 184, 0.5);
-        }
-        html:not(.dark) .custom-popup .leaflet-popup-tip {
-            background: rgba(255, 255, 255, 0.95);
+        /* Safe Area Handling for iPhones */
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom, 20px);
         }
 
         .text-gradient {
@@ -126,14 +110,15 @@
   "imports": {
     "react/": "https://aistudiocdn.com/react@19.2.0/",
     "react": "https://aistudiocdn.com/react@19.2.0",
-    "react-dom/": "https://aistudiocdn.com/react-dom@19.2.0/"
+    "react-dom/": "https://aistudiocdn.com/react-dom@19.2.0/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0"
   }
 }
 </script>
 <link rel="stylesheet" href="/index.css">
 </head>
-<body class="bg-light-50 dark:bg-dark-950 text-slate-900 dark:text-white transition-colors duration-300">
-    <div id="root"></div>
+<body class="bg-light-50 dark:bg-dark-950 text-slate-900 dark:text-white transition-colors duration-300 overflow-hidden fixed inset-0">
+    <div id="root" class="h-full w-full overflow-hidden"></div>
     <script type="module" src="/index.tsx"></script>
 </body>
 </html>
